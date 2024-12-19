@@ -1,0 +1,1768 @@
+<html><head><base href="." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Apostas</title>
+
+    <!-- ----- Início Bootstrap CSS ----- -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- ----- Fim Bootstrap CSS ----- -->
+
+    <!-- ----- Início Bootstrap JS ----- -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- ----- Fim Bootstrap JS ----- -->
+
+    <!-- ----- Início CKEditor 5 ----- -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
+    <!-- ----- Fim CKEditor 5 ----- -->
+
+    <!-- ----- Início Lodash ----- -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash/lodash.min.js"></script>
+    <!-- ----- Fim Lodash ----- -->
+
+    <!-- ----- Início Canvas Confetti ----- -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <!-- ----- Fim Canvas Confetti ----- -->
+
+    <!-- ----- Início Mercado Pago SDK ----- -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
+    <!-- ----- Fim Mercado Pago SDK ----- -->
+
+    <!-- ----- Início React ----- -->
+    <!-- Updated to React 18 - Use Development Build for Debugging -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- ----- Fim React ----- -->
+
+    <!-- ----- Início Manifest ----- -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2196F3">
+    <!-- ----- Fim Manifest ----- -->
+
+    <!-- ----- Início Date-fns e Date-fns-tz ----- -->
+    <script src="https://unpkg.com/date-fns@2.29.3/dist/date-fns.umd.js"></script>
+    <script src="https://unpkg.com/date-fns-tz@1.3.7/dist/date-fns-tz.umd.js"></script>
+    <!-- ----- Fim Date-fns e Date-fns-tz ----- -->
+
+    <!-- ----- Início CSS ----- -->
+    <style>
+    :root {
+        --button-color: #28a745;
+        --button-hover-color: #218838;
+        --button-disabled-color: #6c757d;
+        --button-selected-color: #28a745;
+        --number-btn-background: rgba(255, 255, 255, 0.1);
+        --main-color: #3498db;
+        --secondary-color: #2980b9;
+        --container-padding: 30px;
+        --button-padding: 10px;
+        --button-radius: 5px;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: #f0f2f5;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 60px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 30px auto;
+        background: linear-gradient(135deg, var(--main-color), var(--secondary-color));
+        padding: var(--container-padding);
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    @media (min-width: 600px) {
+        .container {
+            max-width: 600px;
+        }
+    }
+
+    .ticket-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .ticket-info-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .ticket-info-header img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .ticket-info h2 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+
+    .ticket-info p {
+        margin: 5px 0;
+        font-size: 1.2em;
+    }
+
+    .menu-container {
+        position: relative;
+        display: inline-block;
+        z-index: 1002;
+    }
+
+    .menu-button {
+        background: transparent;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .hamburger-icon {
+        width: 25px;
+        height: 17px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .hamburger-icon span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background-color: white;
+        border-radius: 2px;
+    }
+
+    .menu-dropdown {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: auto;
+        background-color: #2980b9;
+        min-width: 160px;
+        z-index: 1001;
+        border-radius: 5px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .menu-dropdown ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .menu-dropdown ul li {
+        padding: 8px 16px;
+    }
+
+    .menu-dropdown ul li a {
+        color: white;
+        text-decoration: none;
+        display: block;
+    }
+
+    .menu-dropdown ul li a:hover {
+        background-color: #1f618d;
+    }
+
+    .menu-dropdown.show {
+        display: block;
+    }
+
+    @keyframes blink {
+        0% { background-color: rgba(255, 255, 255, 0.1); }
+        50% { background-color: #FFD700; }
+        100% { background-color: rgba(255, 255, 255, 0.1); }
+    }
+
+    .number-btn.blinking {
+        animation: blink 0.5s alternate infinite;
+    }
+
+    .how-to-play-btn, .lottery-results-btn, .bet-history-btn {
+        position: static;
+        background: rgba(33, 150, 243, 0.7);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .top-buttons {
+        display: flex;
+        gap: 10px;
+        z-index: 1000;
+        margin-bottom: 20px;
+        justify-content: flex-end;
+    }
+
+    .instructions-modal {
+        display: none;
+        background: #2980b9;
+        padding: 30px;
+        border-radius: 15px;
+        z-index: 1001;
+        max-width: 500px;
+        width: 90%;
+        color: white;
+    }
+
+    .instructions-content {
+        position: relative;
+    }
+
+    .instructions-content h2 {
+        margin-top: 0;
+    }
+
+    .instructions-content ol {
+        margin-bottom: 20px;
+    }
+
+    .instructions-content li {
+        margin-bottom: 10px;
+    }
+
+    .close-instructions {
+        background: #2196F3;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+    .close-instructions:hover {
+        background: #1976D2;
+    }
+
+    .password-container {
+        position: relative;
+    }
+
+    .password-container input[type="password"],
+    .password-container input[type="text"] {
+        padding-right: 100px;
+        box-sizing: border-box;
+    }
+
+    .toggle-password-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 0.9em;
+    }
+
+    .numbers-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        margin: 20px 0;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    @media (min-width: 600px) {
+        .numbers-grid {
+            grid-template-columns: repeat(10, 1fr);
+            margin: 20px;
+        }
+    }
+
+    .number-btn {
+        padding: 5px;
+        background: var(--number-btn-background);
+        border: none;
+        border-radius: var(--button-radius);
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 0.9em;
+    }
+
+    .number-btn.selected {
+        background: var(--button-selected-color);
+    }
+
+    .number-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
+    .selected-numbers {
+        margin: 20px 0;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .submit-btn {
+        background: var(--button-color);
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+        background: var(--button-hover-color);
+    }
+
+    .confirm-selection-btn:disabled,
+    .submit-btn:disabled {
+        background: var(--button-disabled-color);
+        cursor: not-allowed;
+    }
+
+    .auto-generate-btn {
+        padding: 15px 30px;
+        font-size: 1.2em;
+        background: var(--button-color);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+
+    .auto-generate-btn:hover {
+        background: var(--button-hover-color);
+    }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .overlay.show {
+        display: block;
+    }
+
+    .rotating-ball {
+        width: 50px;
+        height: 50px;
+        background: radial-gradient(circle at 30% 30%, white, #4CAF50);
+        border-radius: 50%;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        animation: rotate 2s infinite linear;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .site-footer {
+        margin-top: auto;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+
+    .footer-content {
+        color: white;
+        text-align: center;
+    }
+
+    .footer-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+        justify-content: center;
+    }
+
+    .footer-links a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .footer-links a:hover {
+        text-decoration: underline;
+    }
+
+    .lottery-number {
+        min-width: 120px;
+        padding: 15px;
+    }
+
+    .prize-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #FFD700;
+        margin-bottom: 5px;
+    }
+
+    .number {
+        font-size: 24px;
+        font-weight: bold;
+        font-family: monospace;
+    }
+
+    .lottery-numbers {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .admin-field input[type="color"] {
+        width: 100px;
+        height: 40px;
+        padding: 2px;
+    }
+
+    .admin-field input[type="range"] {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .social-icons {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 900;
+    }
+
+    .social-icon {
+        width: 40px;
+        height: 40px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+
+    .social-icon:hover {
+        transform: scale(1.1);
+    }
+
+    .social-icon img {
+        width: 24px;
+        height: 24px;
+    }
+
+    .social-preview {
+        margin-top: 15px;
+        padding: 10px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 5px;
+    }
+
+    /* ----- Início Estilos para Validação ----- */
+    .input-invalid {
+        border-color: red !important;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 0.8em;
+    }
+    /* ----- Fim Estilos para Validação ----- */
+
+    .ticket-detail {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 10px;
+        margin: 5px;
+        font-size: 0.8em;
+        width: 200px;
+        display: inline-block;
+        vertical-align: top;
+        text-align: center;
+        border: 2px solid white;
+        position: relative;
+        font-size: 12px;
+    }
+
+    .ticket-detail h5 {
+        font-size: 1em;
+        margin-bottom: 5px;
+    }
+
+    .ticket-detail p {
+        margin: 3px 0;
+        font-size: 0.85em;
+    }
+
+    .ticket-detail::before,
+    .ticket-detail::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .ticket-detail::before {
+        top: -10px;
+        left: -10px;
+    }
+
+    .ticket-detail::after {
+        bottom: -10px;
+        right: -10px;
+    }
+
+    #paymentSection {
+        margin-top: 20px;
+        display: none;
+    }
+
+    #pixContainer {
+        display: none;
+        text-align: center;
+    }
+
+    #pixQrCode {
+        max-width: 100%;
+        margin-bottom: 15px;
+    }
+
+    #pixCopyPasteContainer {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    #copiar {
+        width: 100%;
+        background-color: #fff;
+        color: #000;
+        padding: 10px;
+        border-radius: 5px;
+        word-break: break-all;
+        margin-bottom: 10px;
+    }
+    </style>
+    <!-- ----- Fim CSS ----- -->
+</head>
+<body>
+
+<!-- Admin Login Modal -->
+<div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-primary text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminLoginModalLabel">Login Administrativo</h5>
+                <button type="button" class="btn btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" title="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="adminUsername" class="form-label">CPF ou Nome de Usuário:*</label>
+                    <input type="text" id="adminUsername" name="adminUsername" class="form-control" placeholder="Digite seu CPF ou nome de usuário" autocomplete="username" required>
+                </div>
+                <div class="mb-3 position-relative">
+                    <label for="adminPassword" class="form-label">Senha:*</label>
+                    <input type="password" id="adminPassword" name="adminPassword" class="form-control" minlength="8" placeholder="Mínimo 8 caracteres" autocomplete="current-password" required>
+                    <button type="button" id="togglePasswordVisibility" class="btn btn-link position-absolute end-0 top-50 translate-middle-y me-2" title="Mostrar/Ocultar senha">Mostrar</button>
+                </div>
+                <p style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7);">
+                    * O CPF deve conter 11 dígitos ou utilize seu nome de usuário. A senha deve ter no mínimo 8 caracteres.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="adminLoginSubmit" title="Entrar">Entrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="adminLoginCancel" title="Cancelar">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Admin Dashboard Modal -->
+<div class="modal fade" id="adminDashboard" tabindex="-1" aria-labelledby="adminDashboardLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-lg-down">
+        <div class="modal-content bg-primary text-white">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminDashboardLabel">Painel Administrativo</h5>
+                <button type="button" class="btn btn-danger" id="adminLogout" title="Sair">Sair</button>
+            </div>
+            <div class="modal-body">
+                <!-- Painel Administrativo modal content -->
+                <nav class="nav nav-tabs">
+                    <a class="nav-link" data-bs-toggle="tab" href="#tutorialTab" title="Tutorial">Tutorial</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#contentManagementTab" title="Conteúdo">Conteúdo</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#resultsManagementTab" title="Resultados">Resultados</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#winnersManagementTab" title="Ganhadores">Ganhadores</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#userManagementTab" title="Usuários">Usuários</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#ticketSettingsTab" title="Configurações do Bilhete">Configurações do Bilhete</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#reportsTab" title="Relatórios">Relatórios</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#packageInstallerTab" title="Pacotes">Pacotes</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#supportTab" title="Suporte">Suporte</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#apiKeysTab" title="APIs">APIs</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#dbConfigTab" title="Banco de Dados">Banco de Dados</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#securityTab" title="Segurança">Segurança</a>
+                    <a class="nav-link" data-bs-toggle="tab" href="#toolsTab" title="Ferramentas">Ferramentas</a>
+                </nav>
+                <div class="tab-content mt-3">
+                    <div class="tab-pane fade" id="tutorialTab">
+                        <!-- Tutorial Content -->
+                        <div class="mb-3">
+                            <h3>Tutorial - Como Usar as Ferramentas</h3>
+                            <p>Bem-vindo ao Painel Administrativo! Aqui você pode gerenciar todos os aspectos do aplicativo. Abaixo, você encontrará instruções sobre como usar cada uma das ferramentas disponíveis:</p>
+
+                            <div class="mb-3">
+                                <h4>Gerenciamento de Conteúdo</h4>
+                                <p>Nesta seção, você pode editar o conteúdo exibido para os usuários, como instruções, textos e layouts. Edite o campo "Instruções" para atualizar as instruções que aparecem para os usuários na página principal. Não se esqueça de clicar em "Salvar Instruções" após fazer as alterações.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Gerenciamento de Resultados</h4>
+                                <p>Nesta área, você pode inserir manualmente os resultados dos sorteios da loteria. Preencha a "Data do Sorteio", "Resultados", "Número do Sorteio" e "Validade", e clique em "Salvar Resultados" para atualizar as informações.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Gerenciamento de Ganhadores</h4>
+                                <p>Aqui você pode registrar novos ganhadores. Preencha o "Nome do Ganhador", "Prêmio" e "Data", e clique em "Adicionar Ganhador". Os ganhadores serão listados abaixo, e você pode salvar a lista clicando em "Salvar Ganhadores".</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Configurações do Bilhete</h4>
+                                <p>Nesta seção, você pode configurar o valor do bilhete, a data da extração e o valor do prêmio. Essas informações serão exibidas no topo do layout para os usuários. Não se esqueça de clicar em "Salvar Configurações" após fazer as alterações.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Gerenciamento de Usuários</h4>
+                                <p>Nesta seção, você pode cadastrar novos usuários administrativos. Insira o "CPF do Novo Usuário" e a "Senha do Novo Usuário", e clique em "Cadastrar Usuário".</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Relatórios</h4>
+                                <p>Acesse estatísticas de uso, logs de erro e formulários submetidos nesta seção para monitorar o desempenho do aplicativo.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Instalador de Pacote</h4>
+                                <p>Utilize esta ferramenta para instalar pacotes adicionais que possam ser necessários para o aplicativo. Insira o nome do pacote desejado e clique em "Instalar Pacote".</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>APIs</h4>
+                                <p>Aqui você pode gerenciar as chaves de API utilizadas no aplicativo. Insira novas chaves ou visualize as chaves existentes.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Banco de Dados</h4>
+                                <p>Nesta seção, você pode configurar a conexão com o banco de dados, definir as credenciais de acesso e outros parâmetros necessários.</p>
+                            </div>
+
+                            <div class="mb3">
+                                <h4>Segurança Avançada</h4>
+                                <p>Configure regras de firewall, certificados SSL e outras medidas de segurança para proteger o aplicativo.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Ferramentas</h4>
+                                <p>No menu "Ferramentas", você pode acessar o Editor de Código para editar o código-fonte, a Ferramenta de Depuração para executar scripts e identificar problemas, e a Ferramenta de Otimização para melhorar o desempenho do aplicativo.</p>
+                            </div>
+
+                            <div class="mb-3">
+                                <h4>Suporte</h4>
+                                <p>Se precisar de ajuda, acesse a Central de Ajuda ou entre em contato com o suporte através do e-mail fornecido.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="contentManagementTab">
+                        <!-- Content Management -->
+                        <div class="mb-3">
+                            <h3>Gerenciamento de Conteúdo</h3>
+                            <p>Gerencie formulários, layouts e botões do aplicativo.</p>
+
+                            <div class="mb-3">
+                                <label for="adminInstructions" class="form-label">Instruções:</label>
+                                <textarea id="adminInstructions" name="adminInstructions" rows="10" placeholder="Edite as instruções aqui..." class="form-control" required></textarea>
+                            </div>
+                            <button class="btn btn-success" id="saveInstructionsBtn" title="Salvar Instruções">Salvar Instruções</button>
+                            <button class="btn btn-secondary" id="undoInstructionsBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="resultsManagementTab">
+                        <!-- Results Management -->
+                        <div class="mb-3">
+                            <h3>Gerenciamento de Resultados</h3>
+                            <p>Configure os resultados da loteria manualmente.</p>
+                            <div class="mb-3">
+                                <label for="lotteryDateInput" class="form-label">Data do Sorteio:</label>
+                                <input type="date" id="lotteryDateInput" name="lotteryDateInput" class="form-control" autocomplete="bday" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lotteryResultsInput" class="form-label">Resultados:</label>
+                                <textarea id="lotteryResultsInput" name="lotteryResultsInput" placeholder="Ex: 1º:028269 - 2º:048763 - 3º:022814 - 4º:083398 - 5º:078255" class="form-control" autocomplete="off" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="drawNumberInput" class="form-label">Número do Sorteio:</label>
+                                <input type="text" id="drawNumberInput" name="drawNumberInput" class="form-control" placeholder="Ex: 1234" autocomplete="off" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="validityDateInput" class="form-label">Validade:</label>
+                                <input type="date" id="validityDateInput" name="validityDateInput" class="form-control" autocomplete="off" required>
+                            </div>
+                            <button class="btn btn-success" id="saveResultsBtn" title="Salvar Resultados">Salvar Resultados</button>
+                            <button class="btn btn-secondary" id="undoResultsBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="winnersManagementTab">
+                        <!-- Winners Management -->
+                        <div class="mb-3">
+                            <h3>Gerenciamento de Ganhadores</h3>
+                            <p>Adicione ganhadores manualmente.</p>
+                            <div class="mb-3">
+                                <label for="winnerNameInput" class="form-label">Nome do Ganhador:</label>
+                                <input type="text" id="winnerNameInput" name="winnerNameInput" class="form-control" placeholder="Nome do ganhador" autocomplete="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="winnerPrizeInput" class="form-label">Prêmio:</label>
+                                <input type="text" id="winnerPrizeInput" name="winnerPrizeInput" class="form-control" placeholder="Prêmio recebido" autocomplete="organization-title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="winnerDateInput" class="form-label">Data:</label>
+                                <input type="date" id="winnerDateInput" name="winnerDateInput" class="form-control" autocomplete="bday" required>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="addWinnerBtn" title="Adicionar Ganhador">Adicionar Ganhador</button>
+                            <h4>Lista de Ganhadores</h4>
+                            <div id="winnersListAdmin"></div>
+                            <button class="btn btn-success" id="saveWinnersBtn" title="Salvar Ganhadores">Salvar Ganhadores</button>
+                            <button class="btn btn-secondary" id="undoWinnersBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="userManagementTab">
+                        <!-- User Management -->
+                        <div class="mb-3">
+                            <h3>Gerenciamento de Usuários</h3>
+                            <p>Cadastre novos usuários, gerencie permissões e visualize logs de acesso.</p>
+                            <div class="mb-3">
+                                <label for="newUserCpf" class="form-label">CPF do Novo Usuário:</label>
+                                <input type="text" id="newUserCpf" name="newUserCpf" class="form-control" pattern="\d{11}" maxlength="11" placeholder="Digite o CPF do novo usuário" autocomplete="username" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newUserPassword" class="form-label">Senha do Novo Usuário:</label>
+                                <input type="password" id="newUserPassword" name="newUserPassword" class="form-control" minlength="8" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="addNewUserBtn" title="Cadastrar Usuário">Cadastrar Usuário</button>
+                            <button class="btn btn-secondary" id="undoUserBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="ticketSettingsTab">
+                        <!-- Ticket Settings -->
+                        <div class="mb-3">
+                            <h3>Configurações do Bilhete</h3>
+                            <p>Configure o valor do bilhete, data da extração e valor do prêmio.</p>
+                            <div class="mb-3">
+                                <label for="ticketValueInput" class="form-label">Valor do Bilhete:</label>
+                                <input type="number" id="ticketValueInput" name="ticketValueInput" class="form-control" placeholder="Ex: 10" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="extractionDateInput" class="form-label">Data da Extração:</label>
+                                <input type="date" id="extractionDateInput" name="extractionDateInput" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="prizeAmountInput" class="form-label">Valor do Prêmio:</label>
+                                <input type="number" id="prizeAmountInput" name="prizeAmountInput" class="form-control" placeholder="Ex: 1000000" required>
+                            </div>
+                            <button class="btn btn-success" id="saveTicketSettingsBtn" title="Salvar Configurações">Salvar Configurações</button>
+                            <button class="btn btn-secondary" id="undoTicketSettingsBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="reportsTab">
+                        <!-- Reports -->
+                        <div class="mb-3">
+                            <h3>Relatórios</h3>
+                            <p>Acesse estatísticas de uso, logs de erro e formulários submetidos.</p>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="packageInstallerTab">
+                        <!-- Package Installer -->
+                        <div class="mb-3">
+                            <h3>Instalador de Pacote</h3>
+                            <div class="mb-3">
+                                <label for="packageName" class="form-label">Nome do Pacote:</label>
+                                <input type="text" id="packageName" name="packageName" class="form-control" placeholder="Ex: lodash, jquery" autocomplete="off" required>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="installPackageBtn" title="Instalar Pacote">Instalar Pacote</button>
+                            <button type="button" class="btn btn-secondary" id="undoInstallPackageBtn" title="Desfazer">Desfazer</button>
+                            <div id="packageInstallStatus"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="supportTab">
+                        <!-- Support -->
+                        <div class="mb-3">
+                            <h3>Suporte</h3>
+                            <p>Acesse a central de ajuda ou entre em contato com o suporte.</p>
+                            <div class="mb-3">
+                                <h4 class="form-label">Central de Ajuda:</h4>
+                                <a href="https://example.com/help-center.html" id="helpCenterLink" class="text-white" title="Acessar Central de Ajuda">Acesse a Central de Ajuda</a>
+                            </div>
+                            <div class="mb-3">
+                                <h4 class="form-label">Contato com o Suporte:</h4>
+                                <p>Para entrar em contato com o suporte, envie um email para <a href="mailto:suporte@example.com" id="contactSupport" class="text-white" title="Enviar Email para Suporte">suporte@example.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="apiKeysTab">
+                        <!-- APIs -->
+                        <div class="mb-3">
+                            <h3>APIs</h3>
+                            <p>Gerencie as chaves de API utilizadas no aplicativo.</p>
+                            <div class="mb-3">
+                                <label for="apiKeyInput" class="form-label">Chave de API:</label>
+                                <input type="text" id="apiKeyInput" name="apiKeyInput" class="form-control" placeholder="Digite a chave de API" required>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="addApiKeyBtn" title="Adicionar Chave de API">Adicionar Chave de API</button>
+                            <button type="button" class="btn btn-secondary" id="undoApiKeyBtn" title="Desfafar">Desfafar</button>
+                            <h4>Chaves de API</h4>
+                            <ul id="apiKeysList">
+                                <!-- Chaves de API listadas aqui -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="dbConfigTab">
+                        <!-- Banco de Dados -->
+                        <div class="mb-3">
+                            <h3>Banco de Dados</h3>
+                            <p>Configure a conexão com o banco de dados.</p>
+                            <div class="mb-3">
+                                <label for="dbHost" class="form-label">Host do Banco de Dados:</label>
+                                <input type="text" id="dbHost" name="dbHost" class="form-control" placeholder="Ex: localhost">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dbUser" class="form-label">Usuário do Banco de Dados:</label>
+                                <input type="text" id="dbUser" name="dbUser" class="form-control" placeholder="Ex: root">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dbPassword" class="form-label">Senha do Banco de Dados:</label>
+                                <input type="password" id="dbPassword" name="dbPassword" class="form-control" placeholder="Sua senha">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dbName" class="form-label">Nome do Banco de Dados:</label>
+                                <input type="text" id="dbName" name="dbName" class="form-control" placeholder="Ex: meu_banco">
+                            </div>
+                            <button type="button" class="btn btn-success" id="saveDbConfigBtn" title="Salvar Configurações">Salvar Configurações</button>
+                            <button type="button" class="btn btn-secondary" id="undoDbConfigBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="securityTab">
+                        <!-- Segurança -->
+                        <div class="mb-3">
+                            <h3>Segurança Avançada</h3>
+                            <p>Configure medidas de segurança para o aplicativo.</p>
+                            <div class="mb-3">
+                                <label for="firewallRules" class="form-label">Regras de Firewall:</label>
+                                <textarea id="firewallRules" name="firewallRules" class="form-control" placeholder="Defina as regras de firewall"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="sslCertificate" class="form-label">Certificado SSL:</label>
+                                <textarea id="sslCertificate" name="sslCertificate" class="form-control" placeholder="Cole seu certificado SSL aqui"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-success" id="saveSecuritySettingsBtn" title="Salvar Configurações de Segurança">Salvar Configurações de Segurança</button>
+                            <button type="button" class="btn btn-secondary" id="undoSecuritySettingsBtn" title="Desfazer">Desfazer</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="toolsTab">
+                        <!-- Ferramentas -->
+                        <div class="mb-3">
+                            <h3>Ferramentas</h3>
+                            <p>Acesse ferramentas avançadas para gerenciar o aplicativo.</p>
+                            <!-- Code Editor -->
+                            <div class="mb-3">
+                                <h4>Editor de Código</h4>
+                                <p>Edite o código-fonte do aplicativo diretamente.</p>
+                                <label for="sourceCodeEditor" class="form-label">Código Fonte:</label>
+                                <textarea id="sourceCodeEditor" name="sourceCodeEditor" rows="15" class="form-control" required></textarea>
+                                <button type="button" class="btn btn-primary mt-2" id="saveCodeBtn" title="Salvar Código">Salvar Código</button>
+                                <button class="btn btn-secondary mt-2" id="undoCodeBtn" title="Desfazer">Desfazer</button>
+                            </div>
+                            <!-- Debugging Tool -->
+                            <div class="mb-3">
+                                <h4>Ferramenta de Depuração</h4>
+                                <p>Execute scripts e identifique problemas.</p>
+                                <label for="debugScript" class="form-label">Script de Depuração:</label>
+                                <textarea id="debugScript" name="debugScript" rows="5" class="form-control" placeholder="Digite seu código JavaScript aqui..." required></textarea>
+                                <button type="button" class="btn btn-primary mt-2" id="runDebugBtn" title="Executar Script">Executar Script</button>
+                                <pre id="debugOutput" class="bg-dark text-white p-2 mt-2"></pre>
+                            </div>
+                            <!-- Optimization Tool -->
+                            <div class="mb-3">
+                                <h4>Ferramenta de Otimização</h4>
+                                <p>Visualize e depure o código do aplicativo.</p>
+                                <label for="optimizationCodeEditor" class="form-label">Código para Otimização:</label>
+                                <textarea id="optimizationCodeEditor" name="optimizationCodeEditor" rows="15" class="form-control" required></textarea>
+                                <button type="button" class="btn btn-primary mt-2" id="runOptimizationDebugBtn" title="Depurar Código">Depurar Código</button>
+                                <div id="optimizationResults" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="adminSave" title="Salvar Alterações">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <!-- Navigation Menu -->
+    <div class="top-buttons">
+        <div class="menu-container">
+            <button id="menuButton" class="menu-button" title="Menu">
+                <div class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </button>
+            <div class="menu-dropdown" id="menuDropdown">
+                <ul>
+                    <li><a href="#" id="instructionsMenuLink" title="Como Apostar">Como Apostar</a></li>
+                    <li><a href="#" id="lotteryResultsMenuLink" title="Resultados">Resultados</a></li>
+                    <li><a href="#" id="winnersMenuLink" title="Ganhadores">Ganhadores</a></li>
+                    <li><a href="#" id="betHistoryMenuLink" title="Histórico de Apostas">Histórico de Apostas</a></li>
+                    <li><a href="#" id="adminMenuLink" title="Admin">Admin</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Information -->
+    <div class="ticket-info" id="ticketInfo">
+        <div class="ticket-info-header">
+            <img src="/images-removebg-preview.png" alt="Ícone" width="50" height="50">
+            <h2>Informações do Bilhete</h2>
+        </div>
+        <p><strong>Valor do Bilhete:</strong> <span id="displayTicketValue"></span></p>
+        <p><strong>Data da Extração:</strong> <span id="displayExtractionDate"></span></p>
+        <p><strong>Valor do Prêmio:</strong> <span id="displayPrizeAmount"></span></p>
+    </div>
+
+    <h1 class="text-center mb-4">Sistema de Apostas</h1>
+    <div id="betFormContainer">
+        <!-- Formulário de Aposta -->
+        <form id="betForm" novalidate>
+            <div class="row g-3">
+                <div class="col-12 col-md-4">
+                    <label for="name" class="form-label">Nome:*</label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control"
+                        autocomplete="name"
+                        placeholder="Ex: João Silva"
+                        required
+                    >
+                    <div class="error-message" id="nameError"></div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="email" class="form-label">E-mail:*</label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="form-control"
+                        autocomplete="email"
+                        placeholder="Ex: joao.silva@email.com"
+                        required
+                    >
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <label for="phone" class="form-label">Telefone:*</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        class="form-control"
+                        autocomplete="tel"
+                        placeholder="Ex: (11) 98765-4321"
+                        required
+                    >
+                    <div class="error-message" id="phoneError"></div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <label class="form-label">Escolha três dezenas:</label>
+                <div class="numbers-grid" id="numbersGrid"></div>
+                <div class="selected-numbers mt-3">
+                    <div>Dezenas selecionadas: <span id="selectedNumbersDisplay"></span></div>
+                    <div id="ticketCounter">Bilhetes: 0</div>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <button type="button" id="autoGenerate" class="btn btn-secondary flex-fill me-1" title="Gerar Bilhetes">Gerar Bilhetes</button>
+                    <button type="button" id="undoGenerate" class="btn btn-danger flex-fill mx-1" title="Desfazer Seleção">Desfazer</button>
+                    <button type="button" id="confirmSelection" class="btn btn-primary flex-fill ms-1" disabled title="Confirmar Seleção">Confirmar</button>
+                </div>
+            </div>
+            <button type="button" id="togglePayment" class="btn btn-success btn-lg w-100 mt-3" disabled title="Pagar agora">Pagar agora</button>
+            <!-- Ticket List -->
+            <div id="ticketList" class="mt-4"></div>
+            <!-- Payment Section -->
+            <div id="paymentSection" style="display:none;">
+                <!-- PIX Payment Container -->
+                <div id="pixContainer">
+                    <h3>Pagamento via Pix</h3>
+                    <img id="pixQrCode" alt="QR Code Pix">
+                    <div id="pixCopyPasteContainer">
+                        <label for="copiar">Copiar Hash:</label>
+                        <input type="text" id="copiar" value="" readonly/>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="copyPixCodeBtn" title="Copiar Código Pix">Copiar Código Pix</button>
+                </div>
+            </div>
+        </form>
+        <!-- Instructions Modal -->
+        <div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content bg-primary text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="instructionsModalLabel">Como Apostar</h5>
+                        <button type="button" class="btn btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" title="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="instructions-content" id="instructionsContent">
+                            <h2>Passo a Passo</h2>
+                            <ol>
+                                <li>Preencha o formulário com seu nome, e-mail e telefone.</li>
+                                <li>Escolha três dezenas clicando nos números do painel.</li>
+                                <li>Clique em "Confirmar" para adicionar o bilhete.</li>
+                                <li>Após confirmar, você pode gerar mais bilhetes ou prosseguir para o pagamento.</li>
+                                <li>Clique em "Pagar agora" para efetuar o pagamento via Pix.</li>
+                            </ol>
+                            <p>Boa sorte!</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Fechar">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Lottery Results Modal -->
+        <div class="modal fade" id="lotteryResultsModal" tabindex="-1" aria-labelledby="lotteryResultsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content bg-primary text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="lotteryResultsModalLabel">Resultado da Loteria Federal</h5>
+                        <button type="button" class="btn btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" title="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="lottery-date" id="lotteryDate"></div>
+                        <div class="draw-number" id="drawNumberDisplay"></div>
+                        <div class="validity-date" id="validityDateDisplay"></div>
+                        <div class="lottery-numbers" id="lotteryNumbers"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Fechar">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Winners Modal -->
+        <div class="modal fade" id="winnersModal" tabindex="-1" aria-labelledby="winnersModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content bg-primary text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="winnersModalLabel">Ganhadores Recentes</h5>
+                        <button type="button" class="btn btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" title="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="winnersList">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Fechar">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bet History Modal -->
+        <div class="modal fade" id="betHistoryModal" tabindex="-1" aria-labelledby="betHistoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content bg-primary text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="betHistoryModalLabel">Histórico de Apostas</h5>
+                        <button type="button" class="btn btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar" title="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="betHistoryList"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" title="Fechar">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer id="siteFooter" class="site-footer mt-5">
+        <div class="footer-content text-center">
+            <p id="footerText"></p>
+            <div id="footerLinks" class="footer-links"></div>
+        </div>
+    </footer>
+</div>
+<div id="root">
+    <div>
+        <h1>Bem-vindo ao Sistema de Apostas</h1>
+        <!-- Você pode adicionar mais conteúdo aqui se necessário -->
+    </div>
+</div>
+
+<div class="overlay"></div>
+<!-- ----- Início JavaScript ----- -->
+<script>
+// @ts-check
+
+document.addEventListener('DOMContentLoaded', function () {
+  console.log("Hello World!");
+});
+
+/* ----- Início Simulação de Variáveis de Ambiente (.env) ----- */
+/**
+ * Objeto que simula as variáveis de ambiente.
+ * @type {Object}
+ * @property {string} MAIN_ADMIN_USERNAME - Username do administrador principal
+ * @property {string} MAIN_ADMIN_PASSWORD - Senha do administrador principal
+ * @property {Array<{username: string, password: string}>} OTHER_ADMINS - Lista de outros administradores
+ * @property {string} MERCADOPAGO_PUBLIC_KEY - Chave pública do MercadoPago
+ * @property {string} MERCADOPAGO_ACCESS_TOKEN - Access Token do MercadoPago
+ * @property {string} GOOGLE_API_KEY - Chave de API do Google
+ */
+const env = {
+    MAIN_ADMIN_USERNAME: '',
+    MAIN_ADMIN_PASSWORD: '',
+    OTHER_ADMINS: [
+        { username: 'adminUser1', password: '' },
+        { username: 'adminUser2', password: '' }
+    ],
+    MERCADOPAGO_PUBLIC_KEY: '',
+    MERCADOPAGO_ACCESS_TOKEN: '',
+    GOOGLE_API_KEY: ''
+};
+/* ----- Fim Simulação de Variáveis de Ambiente (.env) ----- */
+
+/* ----- Início Variáveis Globais ----- */
+const mainAdminUsername = env.MAIN_ADMIN_USERNAME;
+const mainAdminPassword = env.MAIN_ADMIN_PASSWORD;
+const otherAdmins = env.OTHER_ADMINS;
+
+let tickets = [];
+let winners = [];
+let lotteryResults = {
+    lotteryDate: '',
+    lotteryResults: '',
+    drawNumber: '',
+    validityDate: ''
+};
+
+/** @type {ClassicEditor} */
+let adminEditor;
+/** @type {ClassicEditor} */
+let sourceCodeEditor;
+/** @type {ClassicEditor} */ 
+let optimizationCodeEditor;
+
+/** @type {bootstrap.Modal} */
+let adminLoginModal;
+/** @type {bootstrap.Modal} */
+let adminDashboardModal;
+/** @type {bootstrap.Modal} */
+let instructionsModal;
+/** @type {bootstrap.Modal} */
+let lotteryResultsModal;
+/** @type {bootstrap.Modal} */
+let winnersModal;
+/** @type {bootstrap.Modal} */
+let betHistoryModal;
+
+let ticketSettings = {
+    ticketValue: 10,
+    extractionDate: '',
+    prizeAmount: 0
+};
+
+/* ----- Fim Variáveis Globais ----- */
+
+/* ----- Início Função para Escapar HTML ----- */
+/**
+ * Escapa caracteres especiais em uma string para prevenir XSS.
+ * @param {string} str - A string a ser escapada
+ * @returns {string} - A string escapada
+ */
+function escapeHTML(str) {
+    return String(str).replace(/[&<>"']/g, function (match) {
+        const escapeChars = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        };
+        return escapeChars[match];
+    });
+}
+/* ----- Fim Função para Escapar HTML ----- */
+
+/* ----- Início Objeto de Seleção de Números ----- */
+/**
+ * Objeto para controlar a seleção de números.
+ * @type {Object}
+ * @property {string[]} selectedNumbers - Números selecionados
+ */
+const numberSelection = {
+    selectedNumbers: [],
+    /**
+     * Obtém os números selecionados.
+     * @returns {string[]} Os números selecionados
+     */
+    getSelectedNumbers: function () { return this.selectedNumbers; },
+    /**
+     * Reseta os números selecionados.
+     */
+    resetSelectedNumbers: function () { this.selectedNumbers = []; },
+    /**
+     * Alterna a seleção de um número.
+     * @param {string} number - O número a ser selecionado
+     * @param {HTMLButtonElement} button - O botão correspondente ao número
+     */
+    toggleNumber: function (number, button) {
+        if (this.selectedNumbers.includes(number)) {
+            this.selectedNumbers = this.selectedNumbers.filter(n => n !== number);
+            button.classList.remove('selected');
+        } else {
+            if (this.selectedNumbers.length < 3) {
+                this.selectedNumbers.push(number);
+                button.classList.add('selected');
+            } else {
+                alert('Você só pode selecionar 3 números.');
+            }
+        }
+        updateSelectedNumbersDisplay();
+        validateForm();
+    }
+};
+/* ----- Fim Objeto de Seleção de Números ----- */
+
+/* ----- Início Funções de Interface ----- */
+/**
+ * Cria a grade de números.
+ */
+function createNumberGrid() {
+    const numbersGrid = document.getElementById('numbersGrid');
+    if (numbersGrid) {
+        numbersGrid.innerHTML = '';
+        for (let i = 0; i < 100; i++) {
+            const number = i.toString().padStart(2, '0');
+            const button = document.createElement('button');
+            button.textContent = number;
+            button.className = 'number-btn btn btn-outline-light m-1';
+            button.addEventListener('click', () => {
+                numberSelection.toggleNumber(number, button);
+            });
+            numbersGrid.appendChild(button);
+        }
+    }
+}
+
+/**
+ * Atualiza o display dos números selecionados.
+ */
+function updateSelectedNumbersDisplay() {
+    const selectedNumbersDisplay = document.getElementById('selectedNumbersDisplay');
+    if (selectedNumbersDisplay) {
+        selectedNumbersDisplay.textContent = numberSelection.getSelectedNumbers().join(' - ');
+    }
+}
+
+/**
+ * Exibe a mensagem de erro para um campo.
+ * @param {HTMLInputElement} field - O campo associado ao erro
+ * @param {string} message - A mensagem de erro a ser exibida
+ */
+function showError(field, message) {
+    const errorDiv = document.getElementById(field.id + 'Error');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+    }
+}
+
+/**
+ * Oculta a mensagem de erro de um campo.
+ * @param {HTMLInputElement} field - O campo cujo erro será ocultado
+ */
+function hideError(field) {
+    const errorDiv = document.getElementById(field.id + 'Error');
+    if (errorDiv) {
+        errorDiv.textContent = '';
+    }
+}
+
+/**
+ * Valida um campo específico.
+ * @param {HTMLInputElement} field - O campo a ser validado
+ * @returns {boolean} - Retorna verdadeiro se o campo for válido
+ */
+function validateField(field) {
+    const value = field.value.trim();
+    let isValid = true;
+    let errorMessage = '';
+
+    if (field.id === 'name') {
+        if (value === '') {
+            isValid = false;
+            errorMessage = 'Por favor, insira seu nome.';
+        } else if (value.length < 2) {
+            isValid = false;
+            errorMessage = 'O nome deve ter pelo menos 2 caracteres.';
+        }
+    } else if (field.id === 'email') {
+        if (value === '') {
+            isValid = false;
+            errorMessage = 'Por favor, insira seu e-mail.';
+        } else if (!/\S+@\S+\.\S+/.test(value)) {
+            isValid = false;
+            errorMessage = 'Por favor, insira um e-mail válido.';
+        }
+    } else if (field.id === 'phone') {
+        const numericValue = value.replace(/\D/g, '');
+        if (numericValue === '') {
+            isValid = false;
+            errorMessage = 'Por favor, insira seu telefone.';
+        } else if (!/^\d{9,15}$/.test(numericValue)) {
+            isValid = false;
+            errorMessage = 'Por favor, insira um telefone válido com 9 a 15 dígitos.';
+        }
+    }
+
+    if (!isValid) {
+        field.classList.add('input-invalid');
+        showError(field, errorMessage);
+    } else {
+        field.classList.remove('input-invalid');
+        hideError(field);
+    }
+
+    return isValid;
+}
+
+/**
+ * Valida todo o formulário.
+ */
+function validateForm() {
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const confirmSelectionBtn = document.getElementById('confirmSelection');
+    const togglePayment = document.getElementById('togglePayment');
+
+    const isNameValid = nameInput ? validateField(nameInput) : false;
+    const isEmailValid = emailInput ? validateField(emailInput) : false;
+    const isPhoneValid = phoneInput ? validateField(phoneInput) : false;
+    const isNumbersValid = numberSelection.getSelectedNumbers().length === 3;
+
+    if (confirmSelectionBtn) {
+        confirmSelectionBtn.disabled = !(isNameValid && isEmailValid && isPhoneValid && isNumbersValid);
+    }
+    if (togglePayment) {
+        togglePayment.disabled = !(isNameValid && isEmailValid && isPhoneValid && tickets.length > 0);
+    }
+}
+
+/**
+ * Gera números aleatórios com animação e confetes.
+ */
+function generateRandomNumbers() {
+    const autoGenerateBtn = document.getElementById('autoGenerate');
+    if (autoGenerateBtn) {
+        autoGenerateBtn.disabled = true;
+    }
+
+    numberSelection.resetSelectedNumbers();
+    document.querySelectorAll('.number-btn.selected').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+
+    const allNumberButtons = Array.from(document.querySelectorAll('.number-btn'));
+    const numberButtonMap = {};
+    allNumberButtons.forEach(button => {
+        button.disabled = true;
+        numberButtonMap[button.textContent] = button;
+    });
+
+    let blinkingInterval = setInterval(() => {
+        const randomBtns = [];
+        for (let i = 0; i < 5; i++) {
+            const randomBtn = allNumberButtons[Math.floor(Math.random() * allNumberButtons.length)];
+            randomBtns.push(randomBtn);
+            randomBtn.classList.add('blinking');
+        }
+        setTimeout(() => {
+            randomBtns.forEach(btn => btn.classList.remove('blinking'));
+        }, 200);
+    }, 200);
+
+    setTimeout(() => {
+        clearInterval(blinkingInterval);
+        allNumberButtons.forEach(btn => {
+            btn.classList.remove('blinking');
+            btn.disabled = false;
+        });
+
+        while (numberSelection.getSelectedNumbers().length < 3) {
+            const randomNum = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+            if (!numberSelection.getSelectedNumbers().includes(randomNum)) {
+                numberSelection.selectedNumbers.push(randomNum);
+                const button = numberButtonMap[randomNum];
+                if (button) {
+                    button.classList.add('selected');
+                }
+            }
+        }
+
+        updateSelectedNumbersDisplay();
+        validateForm();
+
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+
+        if (autoGenerateBtn) {
+            autoGenerateBtn.disabled = false;
+        }
+    }, 3000);
+}
+
+/**
+ * Desfaz a geração de bilhetes.
+ */
+function undoRandomNumbers() {
+    numberSelection.resetSelectedNumbers();
+    updateSelectedNumbersDisplay();
+    validateForm();
+    document.querySelectorAll('.number-btn.selected').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    tickets = [];
+    updateTicketCounter();
+    renderTickets();
+    const paymentSection = document.getElementById('paymentSection');
+    if (paymentSection) {
+        paymentSection.style.display = 'none';
+    }
+    const pixContainer = document.getElementById('pixContainer');
+    if (pixContainer) {
+        pixContainer.style.display = 'none';
+    }
+}
+
+/**
+ * Atualiza o contador de bilhetes.
+ */
+function updateTicketCounter() {
+    const ticketCounter = document.getElementById('ticketCounter');
+    if (ticketCounter) {
+        ticketCounter.textContent = `Bilhetes: ${tickets.length}`;
+    }
+    validateForm();
+}
+
+/**
+ * Atualiza a exibição das configurações do bilhete.
+ */
+function updateTicketInfoDisplay() {
+    const displayTicketValue = document.getElementById('displayTicketValue');
+    const displayExtractionDate = document.getElementById('displayExtractionDate');
+    const displayPrizeAmount = document.getElementById('displayPrizeAmount');
+
+    if (displayTicketValue) {
+        displayTicketValue.textContent = `R$ ${ticketSettings.ticketValue.toFixed(2)}`;
+    }
+    if (displayExtractionDate) {
+        displayExtractionDate.textContent = ticketSettings.extractionDate ? formatDateString(ticketSettings.extractionDate) : '';
+    }
+    if (displayPrizeAmount) {
+        displayPrizeAmount.textContent = `R$ ${ticketSettings.prizeAmount.toFixed(2)}`;
+    }
+}
+
+/**
+ * Formata uma data no formato 'yyyy-mm-dd' para 'dd/MM/yyyy'.
+ * @param {string} dateString - A data no formato 'yyyy-mm-dd'
+ * @returns {string} - A data formatada no formato 'dd/MM/yyyy'
+ */
+function formatDateString(dateString) {
+    const timeZone = 'America/Sao_Paulo';
+    const zonedDate = dateFnsTz.utcToZonedTime(dateString, timeZone);
+    return dateFnsTz.format(zonedDate, 'dd/MM/yyyy', { timeZone });
+}
+
+/**
+ * Carrega as configurações do bilhete do localStorage.
+ */
+function loadTicketSettings() {
+    const storedSettings = localStorage.getItem('ticketSettings');
+    if (storedSettings) {
+        ticketSettings = JSON.parse(storedSettings);
+        updateTicketInfoDisplay();
+    }
+}
+
+/**
+ * Salva as configurações do bilhete no localStorage.
+ */
+function saveTicketSettings() {
+    localStorage.setItem('ticketSettings', JSON.stringify(ticketSettings));
+    updateTicketInfoDisplay();
+}
+
+/**
+ * Carrega os resultados da loteria do localStorage.
+ */
+function loadLotteryResults() {
+    const storedResults = localStorage.getItem('lotteryResults');
+    if (storedResults) {
+        lotteryResults = JSON.parse(storedResults);
+        // Atualiza os inputs no painel administrativo
+        const lotteryDateInput = document.getElementById('lotteryDateInput');
+        const lotteryResultsInput = document.getElementById('lotteryResultsInput');
+        const drawNumberInput = document.getElementById('drawNumberInput');
+        const validityDateInput = document.getElementById('validityDateInput');
+
+        if (lotteryDateInput) lotteryDateInput.value = lotteryResults.lotteryDate;
+        if (lotteryResultsInput) lotteryResultsInput.value = lotteryResults.lotteryResults;
+        if (drawNumberInput) drawNumberInput.value = lotteryResults.drawNumber;
+        if (validityDateInput) validityDateInput.value = lotteryResults.validityDate;
+    }
+}
+
+/**
+ * Salva os resultados da loteria no localStorage.
+ */
+function saveLotteryResults() {
+    const lotteryDateInput = document.getElementById('lotteryDateInput');
+    const lotteryResultsInput = document.getElementById('lotteryResultsInput');
+    const drawNumberInput = document.getElementById('drawNumberInput');
+    const validityDateInput = document.getElementById('validityDateInput');
+
+    lotteryResults.lotteryDate = lotteryDateInput ? lotteryDateInput.value : '';
+    lotteryResults.lotteryResults = lotteryResultsInput ? lotteryResultsInput.value : '';
+    lotteryResults.drawNumber = drawNumberInput ? drawNumberInput.value : '';
+    lotteryResults.validityDate = validityDateInput ? validityDateInput.value : '';
+
+    localStorage.setItem('lotteryResults', JSON.stringify(lotteryResults));
+
+    alert('Resultados salvos com sucesso.');
+}
+
+/**
+ * Desfaz as alterações nos resultados da loteria.
+ */
+function undoLotteryResults() {
+    const lotteryDateInput = document.getElementById('lotteryDateInput');
+    const lotteryResultsInput = document.getElementById('lotteryResultsInput');
+    const drawNumberInput = document.getElementById('drawNumberInput');
+    const validityDateInput = document.getElementById('validityDateInput');
+
+    if (lotteryDateInput) lotteryDateInput.value = lotteryResults.lotteryDate;
+    if (lotteryResultsInput) lotteryResultsInput.value = lotteryResults.lotteryResults;
+    if (drawNumberInput) drawNumberInput.value = lotteryResults.drawNumber;
+    if (validityDateInput) validityDateInput.value = lotteryResults.validityDate;
+}
+
+/**
+ * Exibe os resultados da loteria no modal.
+ */
+function displayLotteryResults() {
+    const lotteryDateDisplay = document.getElementById('lotteryDate');
+    const drawNumberDisplay = document.getElementById('drawNumberDisplay');
+    const validityDateDisplay = document.getElementById('validityDateDisplay');
+    const lotteryNumbersDisplay = document.getElementById('lotteryNumbers');
+
+    if (lotteryDateDisplay) {
+        lotteryDateDisplay.textContent = lotteryResults.lotteryDate ? 'Data do Sorteio: ' + formatDateString(lotteryResults.lotteryDate) : '';
+    }
+
+    if (drawNumberDisplay) {
+        drawNumberDisplay.textContent = lotteryResults.drawNumber ? 'Número do Sorteio: ' + escapeHTML(lotteryResults.drawNumber) : '';
+    }
+
+    if (validityDateDisplay) {
+        validityDateDisplay.textContent = lotteryResults.validityDate ? 'Validade: ' + formatDateString(lotteryResults.validityDate) : '';
+    }
+
+    if (lotteryNumbersDisplay) {
+        lotteryNumbersDisplay.innerHTML = '';
+        if (lotteryResults.lotteryResults) {
+            const resultsElement = document.createElement('div');
+            resultsElement.textContent = 'Resultados: ' + lotteryResults.lotteryResults;
+            lotteryNumbersDisplay.appendChild(resultsElement);
+        }
+    }
+}
+
+/**
+ * Carrega a lista de ganhadores do localStorage.
+ */
+function loadWinners() {
+    const storedWinners = localStorage.getItem('winners');
+    if (storedWinners) {
+        winners = JSON.parse(storedWinners);
+        renderWinnersList();
+    }
+}
+
+/**
+ * Salva a lista de ganhadores no localStorage.
+ */
+function saveWinners() {
+    localStorage.setItem('winners', JSON.stringify(winners));
+    alert('Ganhadores salvos com sucesso.');
+}
+
+/**
+ * Renderiza a lista de ganhadores no Painel Administrativo.
+ */
+function renderWinnersList() {
+    const winnersListAdmin = document.getElementById('winnersListAdmin');
+    if (winnersListAdmin) {
+        winnersListAdmin.innerHTML = '';
+        winners.forEach((winner, index) => {
+            const winnerDiv = document.createElement('div');
+            winnerDiv.className = 'winner-item';
+            winnerDiv.innerHTML = `
+                <p><strong>Nome:</strong> ${escapeHTML(winner.name)}</p>
+                <p><strong>Prêmio:</strong> ${escapeHTML(winner.prize)}</p>
+                <p><strong>Data:</strong> ${escapeHTML(formatDateString(winner.date))}</p>
+                <button type="button" class="btn btn-danger btn-sm" data-index="${index}" title="Remover Ganhador">Remover</button>
+                <hr>
+            `;
+            winnersListAdmin.appendChild(winnerDiv);
+        });
+
+        const removeButtons = winnersListAdmin.querySelectorAll('button.btn-danger');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const index = button.getAttribute('data-index');
+                winners.splice(index, 1);
+                renderWinnersList();
+            });
+        });
+    }
+}
+
+/**
+ * Exibe a lista de ganhadores no Modal de Ganhadores.
+ */
+function displayWinners() {
+    const winnersList = document.getElementById('winnersList');
+    if (winnersList) {
+        winnersList.innerHTML = '';
+        winners.forEach(winner => {
+            const winnerDiv = document.createElement('div');
+            winnerDiv.className = 'winner-item';
+            winnerDiv.innerHTML = `
+                <p><strong>Nome:</strong> ${escapeHTML(winner.name)}</p>
+                <p><strong>Prêmio:</strong> ${escapeHTML(winner.prize)}</p>
+                <p><strong>Data:</strong> ${escapeHTML formatDateString(winner.date)}</p>
+                <hr>
+            `;
+            winnersList.appendChild(winnerDiv);
+        });
+    }
+}
+
+/**
+ * Renderiza a lista de bilhetes gerados.
+ */
+function renderTickets() {
+    const ticketList = document.getElementById('ticketList');
+    if (ticketList) {
+        ticketList.innerHTML = ''; // Limpa a lista
+
+        if (tickets.length === 0) {
+            ticketList.innerHTML = '<p>Nenhum bilhete gerado.</p>';
+        } else {
+            tickets.forEach((ticket, index) => {
+                const ticketDiv = document.createElement('div');
+                ticketDiv.className = 'ticket-detail';
+                ticketDiv.innerHTML = `
+                    <h5>Bilhete ${index + 1}</h5>
+                    <p><strong>Nome Completo:</strong> ${escapeHTML(ticket.fullName)}</p>
+                    <p><strong>E-mail:</strong> ${escapeHTML(ticket.email)}</p>
+                    <p><strong>Telefone:</strong> ${escapeHTML(ticket.phone)}</p>
+                    <p><strong>Dezenas Selecionadas:</strong> ${escapeHTML(ticket.numbers.join(' - '))}</p>
+                    <p><strong>Valor do Bilhete:</strong> R$ ${ticket.ticketValue.toFixed(2)}</p>
+                    <p><strong>Data da Emissão:</strong> ${formatDate(ticket.issueDate)}</p>
+                    <p><strong>Data de Vencimento:</strong> ${ticket.expiryDate ? escapeHTML(formatDateString(ticket.expiryDate)) : 'N/A'}</p>
+                `;
+                ticketList.appendChild(ticketDiv);
+            });
+        }
+    }
+}
+
+/**
+ * Formata um objeto Date para 'dd/MM/yyyy'.
+ * @param {Date} date - Objeto Date a ser formatado
+ * @returns {string} - Data formatada
+ */
+function formatDate(date) {
+    const timeZone = 'America
