@@ -1272,6 +1272,10 @@ body {
 
 <!-- Canvas Confetti -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+    // Ensure confetti is available globally
+    const confetti = window.confetti;
+</script>
 
 <!-- Mercado Pago SDK -->
 <script src="https://sdk.mercadopago.com/js/v2"></script>
@@ -1365,7 +1369,7 @@ const numberSelection = {
     resetSelectedNumbers: function () { this.selectedNumbers = []; },
     toggleNumber: function (number, button) {
         if (this.selectedNumbers.includes(number)) {
-            this.selectedNumbers = this.selectedNumbers.filter(n => n !== number);
+            this.selectedNumbers = this.selectedNumbers.filter((n) => n !== number);
             button.classList.remove('selected');
         } else {
             if (this.selectedNumbers.length < 3) {
